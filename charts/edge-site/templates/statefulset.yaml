@@ -23,12 +23,21 @@ spec:
       volumes:
         {{ if eq .Values.recordingStorage.provider "local" }}
         - name: storage-root
+          {{ if .Values.recordingStorage.enabled }}
           persistentVolumeClaim:
             claimName: "{{ .Values.edgeController.storageClaim }}"
+          {{ else if not .Values.recordingStorage.enabled }}
+            emptyDir: {}
+          {{ end }}
+          
         {{ end }}
         - name: index-root
+          {{ if .Values.recordingStorage.enabled }}
           persistentVolumeClaim:
             claimName: "{{ .Values.edgeController.indexClaim }}"
+          {{ else if not .Values.recordingStorage.enabled }}
+            emptyDir: {}
+          {{ end }}
         - name: cloud-credentials
           secret:
             secretName: gcp-cloud-credential
